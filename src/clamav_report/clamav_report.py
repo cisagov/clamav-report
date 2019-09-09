@@ -124,7 +124,7 @@ def run_ansible(inventory_filename, hosts="all"):
     # Initialize required objects.
     # Takes care of finding and reading yaml, json and ini files.
     loader = DataLoader()
-    passwords = dict(vault_pass="secret")
+    passwords = dict(vault_pass="secret")  # nosec
 
     # Instantiate our ResultCallback for handling results as they come in.
     # Ansible expects this to be one of its main display outlets.
@@ -219,8 +219,8 @@ def create_host_row(host_results):
     row["OPERATION_SYSTEM"] = facts["ansible_system"]
     row["MAJOR_VERSION"] = 0
     row["MINOR_VERSION"] = 0
-    row["AGENT_VERSION"] = "0.0.0.0"
-    row["CIDS_ENGINE_VERSION"] = "0.0.0.0"
+    row["AGENT_VERSION"] = "0.0.0.0"  # nosec
+    row["CIDS_ENGINE_VERSION"] = "0.0.0.0"  # nosec
     row["CIDS_DRV_ONOFF"] = "ON"
     row["LAST_SCAN_TIME"] = mtimes[LAST_SCAN_LOG_FILENAME]
     row["LAST_VIRUS_TIME"] = mtimes[LAST_DETECTION_FILENAME]
