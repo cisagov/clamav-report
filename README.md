@@ -13,6 +13,16 @@ that is able to be ingested by legacy compliance tools.
 It assumes that ClamAV has been installed using the
 [Ansible ClamAV role](https://github.com/cisagov/ansible-role-clamav).
 
+## Usage ##
+
+```console
+clamav-report tests/inventory.txt clamav-201909.csv
+
+2019-09-09 15:39:41,256 INFO Gathering ClamAV data from remote servers.
+2019-09-09 15:39:42,292 WARNING Task callback UNREACHABLE: borked.foo.gov - Gathering Facts
+2019-09-09 15:39:47,268 INFO Generating consolidated virus report: clamav-201909.csv
+```
+
 ## Contributing ##
 
 We welcome contributions!  Please see [here](CONTRIBUTING.md) for
