@@ -30,7 +30,7 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.vars.manager import VariableManager
-import ansible.constants as C
+import ansible.constants as ANSIBLE_CONST
 import docopt
 
 from ._version import __version__
@@ -188,8 +188,10 @@ def run_ansible(inventory_filename, hosts="all"):
             tqm.cleanup()
 
         # Remove ansible temporary directory
-        logging.debug(f"Cleaning up temporary file in {C.DEFAULT_LOCAL_TMP}")
-        shutil.rmtree(C.DEFAULT_LOCAL_TMP, True)
+        logging.debug(
+            f"Cleaning up temporary file in {ANSIBLE_CONST.DEFAULT_LOCAL_TMP}"
+        )
+        shutil.rmtree(ANSIBLE_CONST.DEFAULT_LOCAL_TMP, True)
 
     return results_callback.results
 
