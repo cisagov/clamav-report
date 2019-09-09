@@ -1,0 +1,3 @@
+[all]
+vpn.cool.cyber.dhs.gov
+localhost
