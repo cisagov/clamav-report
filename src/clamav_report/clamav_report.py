@@ -3,10 +3,11 @@
 """ClamAV data gathering and report generation tool.
 
 Usage:
-  clamav-report [--log-level=LEVEL] [--group=GROUP] <inventory-file> <output-csv-file>
+  clamav-report [options] <inventory-file> <output-csv-file>
   clamav-report (-h | --help)
 
 Options:
+  -f --forks=COUNT       Number of hosts to process in parallel. [default: 10]
   -g --group=GROUP       Inventory host group to access. [default: all]
   -h --help              Show this message.
   --log-level=LEVEL      If specified, then the log level will be set to
@@ -105,14 +106,14 @@ class ResultCallback(CallbackBase):
         logging.error(f"Task callback FAILED: {result._host.name} - {result.task_name}")
 
 
-def run_ansible(inventory_filename, hosts="all"):
+def run_ansible(inventory_filename, hosts="all", forks=10):
     """Run ansible with the provided inventory file and host group."""
     # Since the API is constructed for CLI it expects certain options to
     # always be set in the context object.
     context.CLIARGS = ImmutableDict(
         connection="ssh",
         module_path=[],
-        forks=10,
+        forks=forks,
         become=None,
         become_method="sudo",
         become_user=None,
@@ -178,7 +179,7 @@ def run_ansible(inventory_filename, hosts="all"):
             passwords=passwords,
             stdout_callback=results_callback,  # Use our custom callback.
         )
-        logging.debug(f"Starting task queue manager.")
+        logging.debug(f"Starting task queue manager with forks={forks}.")
         tqm.run(play)
     finally:
         # We always need to cleanup child procs and
@@ -256,7 +257,9 @@ def main():
 
     logging.info("Gathering ClamAV data from remote servers.")
     results = run_ansible(
-        inventory_filename=args["<inventory-file>"], hosts=args["--group"]
+        inventory_filename=args["<inventory-file>"],
+        hosts=args["--group"],
+        forks=args["--forks"],
     )
 
     csv_data = []
