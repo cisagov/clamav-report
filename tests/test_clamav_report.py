@@ -10,6 +10,7 @@ from unittest.mock import patch
 # Third-Party Libraries
 import pytest
 
+# cisagov Libraries
 from clamav_report import clamav_report
 
 log_levels = (
@@ -82,6 +83,10 @@ def test_log_levels(level):
 
 def test_bad_log_level():
     """Validate bad log-level argument returns error."""
-    with patch.object(sys, "argv", ["bogus", f"--log-level=emergency", "tests/inventory.txt", "out.csv"]):
+    with patch.object(
+        sys,
+        "argv",
+        ["bogus", "--log-level=emergency", "tests/inventory.txt", "out.csv"],
+    ):
         return_code = clamav_report.main()
         assert return_code == 1, "main() should return failure"

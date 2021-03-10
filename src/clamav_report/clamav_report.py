@@ -13,15 +13,16 @@ Options:
                          "warning", "error", and "critical". [default: info]
 """
 
+# Standard Python Libraries
 from collections import defaultdict
-from datetime import datetime
 import csv
-import dateutil.tz as tz
+from datetime import datetime
 import logging
 import shutil
-import sys
 
+# Third-Party Libraries
 from ansible import context
+import ansible.constants as ANSIBLE_CONST
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.inventory.manager import InventoryManager
 from ansible.module_utils.common.collections import ImmutableDict
@@ -29,7 +30,7 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.vars.manager import VariableManager
-import ansible.constants as ANSIBLE_CONST
+import dateutil.tz as tz
 import docopt
 
 from ._version import __version__
@@ -183,7 +184,7 @@ def run_ansible(inventory_filename, hosts="all", forks=10):
         # We always need to cleanup child procs and
         # the structures we use to communicate with them.
         if tqm is not None:
-            logging.debug(f"Cleaning up task queue manager.")
+            logging.debug("Cleaning up task queue manager.")
             tqm.cleanup()
 
         # Remove ansible temporary directory

@@ -87,17 +87,18 @@ setup(
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
     install_requires=[
-            # With the release of version 2.10, Ansible finally correctly
-            # identifies Kali Linux as being the Kali distribution of the Debian
-            # OS family.  This simplifies a lot of things for roles that support
-            # Kali Linux, so it makes sense to force the installation of Ansible
-            # 2.10 or newer.
-            "ansible>=2.10,<3",
-            "docopt",
-            "python-dateutil",
-            "setuptools >= 24.2.0",
+        # With the release of version 2.10, Ansible finally correctly
+        # identifies Kali Linux as being the Kali distribution of the Debian
+        # OS family.  This simplifies a lot of things for roles that support
+        # Kali Linux, so it makes sense to force the installation of Ansible
+        # 2.10 or newer.
+        "ansible>=2.10,<3",
+        "docopt",
+        "python-dateutil",
+        "setuptools >= 24.2.0",
     ],
-    extras_require={"test": [
+    extras_require={
+        "test": [
             "coverage",
             # coveralls 1.11.0 added a service number for calls from
             # GitHub Actions. This caused a regression which resulted in a 422
