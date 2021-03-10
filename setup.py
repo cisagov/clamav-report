@@ -95,6 +95,7 @@ setup(
         "ansible>=2.10,<3",
         "docopt",
         "python-dateutil",
+        "schema",
         "setuptools >= 24.2.0",
     ],
     extras_require={

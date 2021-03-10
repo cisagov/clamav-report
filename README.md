@@ -16,7 +16,7 @@ It assumes that ClamAV has been installed using the
 ## Usage ##
 
 ```console
-clamav-report tests/inventory.txt clamav-201909.csv
+clamav-report tests/files/inventory.txt clamav-201909.csv
 
 2019-09-09 15:39:41,256 INFO Gathering ClamAV data from remote servers.
 2019-09-09 15:39:42,292 WARNING Task callback UNREACHABLE: borked.foo.gov - Gathering Facts

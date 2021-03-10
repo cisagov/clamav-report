@@ -68,7 +68,9 @@ def test_release_version():
 def test_log_levels(level):
     """Validate commandline log-level arguments."""
     with patch.object(
-        sys, "argv", ["bogus", f"--log-level={level}", "tests/inventory.txt", "out.csv"]
+        sys,
+        "argv",
+        ["bogus", f"--log-level={level}", "tests/files/inventory.txt", "out.csv"],
     ):
         with patch.object(logging.root, "handlers", []):
             assert (
@@ -86,7 +88,7 @@ def test_bad_log_level():
     with patch.object(
         sys,
         "argv",
-        ["bogus", "--log-level=emergency", "tests/inventory.txt", "out.csv"],
+        ["bogus", "--log-level=emergency", "tests/files/inventory.txt", "out.csv"],
     ):
         return_code = clamav_report.main()
         assert return_code == 1, "main() should return failure"
