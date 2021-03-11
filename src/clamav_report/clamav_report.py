@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """ClamAV data gathering and report generation tool.
 
 Usage:
@@ -15,15 +13,19 @@ Options:
                          "warning", "error", and "critical". [default: info]
 """
 
+# Standard Python Libraries
 from collections import defaultdict
-from datetime import datetime
 import csv
-import dateutil.tz as tz
+from datetime import datetime
 import logging
+import os.path
 import shutil
 import sys
+from typing import Any, Dict
 
+# Third-Party Libraries
 from ansible import context
+import ansible.constants as ANSIBLE_CONST
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.inventory.manager import InventoryManager
 from ansible.module_utils.common.collections import ImmutableDict
@@ -31,8 +33,9 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.playbook.play import Play
 from ansible.plugins.callback import CallbackBase
 from ansible.vars.manager import VariableManager
-import ansible.constants as ANSIBLE_CONST
+import dateutil.tz as tz
 import docopt
+from schema import And, Schema, SchemaError, Use
 
 from ._version import __version__
 
@@ -185,7 +188,7 @@ def run_ansible(inventory_filename, hosts="all", forks=10):
         # We always need to cleanup child procs and
         # the structures we use to communicate with them.
         if tqm is not None:
-            logging.debug(f"Cleaning up task queue manager.")
+            logging.debug("Cleaning up task queue manager.")
             tqm.cleanup()
 
         # Remove ansible temporary directory
@@ -241,25 +244,49 @@ def write_csv(fields, data, output_filename, delimiter=","):
 
 def main():
     """Gather ClamAV data from hosts and create a CSV file."""
-    args = docopt.docopt(__doc__, version=__version__)
-    # Set up logging
-    log_level = args["--log-level"]
+    args: Dict[str, str] = docopt.docopt(__doc__, version=__version__)
+    # Validate and convert arguments as needed
+    schema: Schema = Schema(
+        {
+            "--forks": And(
+                Use(int),
+                lambda f: f > 0,
+                error="The --forks value must be a positive integer value.",
+            ),
+            "--log-level": And(
+                str,
+                Use(str.lower),
+                lambda n: n in ("debug", "info", "warning", "error", "critical"),
+                error="Possible values for --log-level are "
+                + "debug, info, warning, error, and critical.",
+            ),
+            "<inventory-file>": And(
+                str,
+                And(os.path.exists, error="Inventory file does not exist."),
+                And(os.path.isfile, error="Inventory file must be a file."),
+            ),
+            str: object,  # Don't care about other keys, if any
+        }
+    )
+
     try:
-        logging.basicConfig(
-            format="%(asctime)-15s %(levelname)s %(message)s", level=log_level.upper()
-        )
-    except ValueError:
-        logging.critical(
-            f'"{log_level}" is not a valid logging level.  Possible values '
-            "are debug, info, warning, and error."
-        )
+        validated_args: Dict[str, Any] = schema.validate(args)
+    except SchemaError as err:
+        # Exit because one or more of the arguments were invalid
+        print(err, file=sys.stderr)
         return 1
+
+    # Set up logging
+    log_level = validated_args["--log-level"]
+    logging.basicConfig(
+        format="%(asctime)-15s %(levelname)s %(message)s", level=log_level.upper()
+    )
 
     logging.info("Gathering ClamAV data from remote servers.")
     results = run_ansible(
-        inventory_filename=args["<inventory-file>"],
-        hosts=args["--group"],
-        forks=args["--forks"],
+        inventory_filename=validated_args["<inventory-file>"],
+        hosts=validated_args["--group"],
+        forks=validated_args["--forks"],
     )
 
     csv_data = []
@@ -267,13 +294,11 @@ def main():
         row = create_host_row(host_results)
         csv_data.append(row)
 
-    logging.info("Generating consolidated virus report: " + args["<output-csv-file>"])
-    write_csv(FIELDS, csv_data, args["<output-csv-file>"])
+    logging.info(
+        "Generating consolidated virus report: " + validated_args["<output-csv-file>"]
+    )
+    write_csv(FIELDS, csv_data, validated_args["<output-csv-file>"])
 
     # Stop logging and clean up
     logging.shutdown()
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

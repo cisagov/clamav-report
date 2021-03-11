@@ -8,10 +8,13 @@ Based on:
 - https://blog.ionelmc.ro/2014/05/25/python-packaging/#the-structure
 """
 
+# Standard Python Libraries
+import codecs
 from glob import glob
-from os.path import splitext, basename
+from os.path import abspath, basename, dirname, join, splitext
 
-from setuptools import setup, find_packages
+# Third-Party Libraries
+from setuptools import find_packages, setup
 
 
 def readme():
@@ -20,28 +23,42 @@ def readme():
         return f.read()
 
 
-def package_vars(version_file):
-    """Read in and return the variables defined by the version_file."""
-    pkg_vars = {}
-    with open(version_file) as f:
-        exec(f.read(), pkg_vars)  # nosec
-    return pkg_vars
+# Below two methods were pulled from:
+# https://packaging.python.org/guides/single-sourcing-package-version/
+def read(rel_path):
+    """Open a file for reading from a given relative path."""
+    here = abspath(dirname(__file__))
+    with codecs.open(join(here, rel_path), "r") as fp:
+        return fp.read()
+
+
+def get_version(version_file):
+    """Extract a version number from the given file path."""
+    for line in read(version_file).splitlines():
+        if line.startswith("__version__"):
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    raise RuntimeError("Unable to find version string.")
 
 
 setup(
     name="clamav-report",
     # Versions should comply with PEP440
-    version=package_vars("src/clamav_report/_version.py")["__version__"],
+    version=get_version("src/clamav_report/_version.py"),
     description="Clamav-report python tool",
     long_description=readme(),
     long_description_content_type="text/markdown",
-    # NCATS "homepage"
-    url="https://www.us-cert.gov/resources/ncats",
-    # The project's main homepage
-    download_url="https://github.com/cisagov/clamav-report",
+    # Landing page for CISA's cybersecurity mission
+    url="https://www.cisa.gov/cybersecurity",
+    # Additional URLs for this project per
+    # https://packaging.python.org/guides/distributing-packages-using-setuptools/#project-urls
+    project_urls={
+        "Source": "https://github.com/cisagov/clamav-report",
+        "Tracker": "https://github.com/cisagov/clamav-report/issues",
+    },
     # Author details
-    author="Cyber and Infrastructure Security Agency",
-    author_email="ncats@hq.dhs.gov",
+    author="Cybersecurity and Infrastructure Security Agency",
+    author_email="github@cisa.dhs.gov",
     license="License :: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -59,15 +76,43 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
+    python_requires=">=3.6",
     # What does your project relate to?
     keywords="clamav",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
-    install_requires=["docopt", "setuptools", "ansible", "python-dateutil"],
-    extras_require={"test": ["pre-commit", "pytest", "pytest-cov", "coveralls"]},
+    install_requires=[
+        # With the release of version 2.10, Ansible finally correctly
+        # identifies Kali Linux as being the Kali distribution of the Debian
+        # OS family.  This simplifies a lot of things for roles that support
+        # Kali Linux, so it makes sense to force the installation of Ansible
+        # 2.10 or newer.
+        "ansible>=2.10,<3",
+        "docopt",
+        "python-dateutil",
+        "schema",
+        "setuptools >= 24.2.0",
+    ],
+    extras_require={
+        "test": [
+            "coverage",
+            # coveralls 1.11.0 added a service number for calls from
+            # GitHub Actions. This caused a regression which resulted in a 422
+            # response from the coveralls API with the message:
+            # Unprocessable Entity for url: https://coveralls.io/api/v1/jobs
+            # 1.11.1 fixed this issue, but to ensure expected behavior we'll pin
+            # to never grab the regression version.
+            "coveralls != 1.11.0",
+            "pre-commit",
+            "pytest-cov",
+            "pytest",
+        ]
+    },
     # Conveniently allows one to run the CLI tool as `clamav-report`
     entry_points={
         "console_scripts": ["clamav-report = clamav_report.clamav_report:main"]
