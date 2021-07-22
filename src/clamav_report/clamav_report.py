@@ -242,7 +242,7 @@ def write_csv(fields, data, output_filename, delimiter=","):
         csv_writer.writerow(row)
 
 
-def main():
+def main() -> None:
     """Gather ClamAV data from hosts and create a CSV file."""
     args: Dict[str, str] = docopt.docopt(__doc__, version=__version__)
     # Validate and convert arguments as needed
@@ -274,7 +274,7 @@ def main():
     except SchemaError as err:
         # Exit because one or more of the arguments were invalid
         print(err, file=sys.stderr)
-        return 1
+        sys.exit(1)
 
     # Set up logging
     log_level = validated_args["--log-level"]
@@ -301,4 +301,3 @@ def main():
 
     # Stop logging and clean up
     logging.shutdown()
-    return 0
