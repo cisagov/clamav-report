@@ -286,9 +286,9 @@ def main() -> None:
     logging.info("Gathering ClamAV data from remote servers.")
     results = run_ansible(
         inventory_filename=validated_args["<inventory-file>"],
+        become=validated_args["--become"],
         hosts=validated_args["--group"],
         forks=validated_args["--forks"],
-        become=validated_args["--become"],
     )
 
     csv_data = []
