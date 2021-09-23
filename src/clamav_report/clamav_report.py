@@ -5,6 +5,7 @@ Usage:
   clamav-report (-h | --help)
 
 Options:
+  -b --become            Become root when executing Ansible tasks.
   -f --forks=COUNT       Number of hosts to process in parallel. [default: 10]
   -g --group=GROUP       Inventory host group to access. [default: all]
   -h --help              Show this message.
@@ -109,7 +110,7 @@ class ResultCallback(CallbackBase):
         logging.error(f"Task callback FAILED: {result._host.name} - {result.task_name}")
 
 
-def run_ansible(inventory_filename, hosts="all", forks=10):
+def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
     """Run ansible with the provided inventory file and host group."""
     # Since the API is constructed for CLI it expects certain options to
     # always be set in the context object.
@@ -117,7 +118,7 @@ def run_ansible(inventory_filename, hosts="all", forks=10):
         connection="ssh",
         module_path=[],
         forks=forks,
-        become=None,
+        become=become,
         become_method="sudo",
         become_user=None,
         check=False,
@@ -285,6 +286,7 @@ def main() -> None:
     logging.info("Gathering ClamAV data from remote servers.")
     results = run_ansible(
         inventory_filename=validated_args["<inventory-file>"],
+        become=validated_args["--become"],
         hosts=validated_args["--group"],
         forks=validated_args["--forks"],
     )
