@@ -68,18 +68,20 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, **kwargs):
         """Store results of a good task run."""
         # store results for retrieval later
-        logging.debug(f"Task callback OK: {result._host.name} - {result.task_name}")
+        logging.debug("Task callback OK: %s - %s", result._host.name, result.task_name)
         self.results[result._host.name][result.task_name].append(result._result)
 
     def v2_runner_on_unreachable(self, result):
         """Handle unreachable hosts."""
         logging.warning(
-            f"Task callback UNREACHABLE: {result._host.name} - {result.task_name}"
+            "Task callback UNREACHABLE: %s - %s", result._host.name, result.task_name
         )
 
     def v2_runner_on_failed(self, result, *args, **kwargs):
         """Handle failed tasks."""
-        logging.error(f"Task callback FAILED: {result._host.name} - {result.task_name}")
+        logging.error(
+            "Task callback FAILED: %s - %s", result._host.name, result.task_name
+        )
 
 
 def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
@@ -109,7 +111,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
     # Create inventory, use path to host config file as source or
     # hosts in a comma separated string.
-    logging.debug(f"Reading inventory from: {inventory_filename}")
+    logging.debug("Reading inventory from: %s", inventory_filename)
     inventory = InventoryManager(loader=loader, sources=inventory_filename)
 
     # Variable manager takes care of merging all the different sources to
@@ -155,7 +157,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
             passwords=passwords,
             stdout_callback=results_callback,  # Use our custom callback.
         )
-        logging.debug(f"Starting task queue manager with forks={forks}.")
+        logging.debug("Starting task queue manager with forks=%d.", forks)
         tqm.run(play)
     finally:
         # We always need to cleanup child procs and
@@ -166,7 +168,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
         # Remove ansible temporary directory
         logging.debug(
-            f"Cleaning up temporary file in {ANSIBLE_CONST.DEFAULT_LOCAL_TMP}"
+            "Cleaning up temporary file in %s", ANSIBLE_CONST.DEFAULT_LOCAL_TMP
         )
         shutil.rmtree(ANSIBLE_CONST.DEFAULT_LOCAL_TMP, True)
 
@@ -185,7 +187,7 @@ def create_host_row(host_results):
     """Create a row of data from a host's results."""
     facts = host_results["Gathering Facts"][0]["ansible_facts"]
     # extract the mtimes from the "stat" module invocations
-    mtimes = dict()
+    mtimes = {}
     for stat_task in host_results["stat"]:
         path = stat_task["invocation"]["module_args"]["path"]
         mtime = stat_task["stat"].get("mtime", 0)  # 0 if it doesn't exist
@@ -263,7 +265,7 @@ def main() -> None:
         csv_data.append(row)
 
     logging.info(
-        "Generating consolidated virus report: " + validated_args["<output-csv-file>"]
+        "Generating consolidated virus report: %s", validated_args["<output-csv-file>"]
     )
     write_csv(FIELDS, csv_data, validated_args["<output-csv-file>"])
 
