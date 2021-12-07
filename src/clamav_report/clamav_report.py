@@ -41,39 +41,11 @@ from schema import And, Schema, SchemaError, Use
 from ._version import __version__
 
 FIELDS = (
-    "GROUPNAME",
-    "COMPUTER_NAME",
-    "IP_ADDR1",
-    "OPERATION_SYSTEM",
-    "SERVICE_PACK",
-    "MAJOR_VERSION",
-    "MINOR_VERSION",
-    "AGENT_VERSION",
-    "CIDS_ENGINE_VERSION",
-    "CIDS_DRV_ONOFF",
-    "LAST_SCAN_TIME",
-    "LAST_VIRUS_TIME",
-    "PATTERNDATE",
-    "COMPUTER_DOMAIN_NAME",
-    "CURRENT_LOGIN_USER",
-    "FIREWALL_ONOFF",
-    "AGENT_TYPE",
-    "IDS_VERSION",
-    "CIDS_DEFSET_VERSION",
-    "HI_REASONCODE",
-    "HI_REASONDESC",
-    "STATUS",
-    "AVGENGINE_ONOFF",
-    "AP_ONOFF",
-    "TAMPER_ONOFF",
-    "LAST_DOWNLOAD_TIME",
-    "PTP_ONOFF",
-    "DA_ONOFF",
-    "INFECTED",
-    "CONTENT_UPDATE",
-    "LAST_UPDATED_TIME",
-    "HI_STATUS",
-    "VERSION",
+    "Group Name",
+    "System Name",
+    "Last Update Time",
+    "Last Scan Time",
+    "Host IPS Status (Host IPS)",
 )
 TIME_FORMAT = "%m/%d/%Y %H:%M:%S"
 CLAMAV_DB_FILENAME = "/var/lib/clamav/daily.cld"
@@ -219,17 +191,11 @@ def create_host_row(host_results):
         mtime = stat_task["stat"].get("mtime", 0)  # 0 if it doesn't exist
         mtimes[path] = timestamp_to_string(mtime)
     row = {key: None for key in FIELDS}
-    row["IP_ADDR1"] = facts["ansible_default_ipv4"]["address"]
-    row["COMPUTER_NAME"] = facts["ansible_hostname"]
-    row["OPERATION_SYSTEM"] = facts["ansible_system"]
-    row["MAJOR_VERSION"] = 0
-    row["MINOR_VERSION"] = 0
-    row["AGENT_VERSION"] = "0.0.0.0"  # nosec
-    row["CIDS_ENGINE_VERSION"] = "0.0.0.0"  # nosec
-    row["CIDS_DRV_ONOFF"] = "ON"
-    row["LAST_SCAN_TIME"] = mtimes[LAST_SCAN_LOG_FILENAME]
-    row["LAST_VIRUS_TIME"] = mtimes[LAST_DETECTION_FILENAME]
-    row["PATTERNDATE"] = mtimes[CLAMAV_DB_FILENAME]
+    row["System Name"] = facts["ansible_hostname"]
+    row["Last Update Time"] = mtimes[CLAMAV_DB_FILENAME]
+    row["Last Scan Time"] = mtimes[LAST_SCAN_LOG_FILENAME]
+    # row["Last Detection Time"] = mtimes[LAST_DETECTION_FILENAME]
+    row["Host IPS Status (Host IPS)"] = "ON"
     return row
 
 
