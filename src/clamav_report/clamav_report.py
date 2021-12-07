@@ -47,7 +47,7 @@ FIELDS = (
     "Last Scan Time",
     "Host IPS Status (Host IPS)",
 )
-TIME_FORMAT = "%m/%d/%Y %H:%M:%S"
+TIME_FORMAT = "%m/%d/%Y %H:%M"
 CLAMAV_DB_FILENAME = "/var/lib/clamav/daily.cld"
 LAST_SCAN_LOG_FILENAME = "/var/log/clamav/lastscan.log"
 LAST_DETECTION_FILENAME = "/var/log/clamav/last_detection"
