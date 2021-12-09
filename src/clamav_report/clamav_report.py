@@ -193,6 +193,9 @@ def create_host_row(host_results):
         mtime = stat_task["stat"].get("mtime", 0)  # 0 if it doesn't exist
         mtimes[path] = timestamp_to_string(mtime)
     row = {key: None for key in FIELDS}
+    # "Group Name" is intentionally left blank so that it can be manually
+    # edited after the output CSV has been generated.
+    row["Group Name"] = ""
     row["System Name"] = facts["ansible_hostname"]
     row["Last Update Time"] = mtimes[CLAMAV_DB_FILENAME]
     row["Last Scan Time"] = mtimes[LAST_SCAN_LOG_FILENAME]
