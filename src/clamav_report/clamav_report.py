@@ -199,6 +199,10 @@ def create_host_row(host_results):
     row["System Name"] = facts["ansible_hostname"]
     row["Last Update Time"] = mtimes[CLAMAV_DB_FILENAME]
     row["Last Scan Time"] = mtimes[LAST_SCAN_LOG_FILENAME]
+    # "Last Detection Time" is not currently needed in the output, but I left
+    # it commented-out below in case of the likely event it is requested again
+    # in the future.  Note that it would also need to be added to the FIELDS
+    # tuple above.
     # row["Last Detection Time"] = mtimes[LAST_DETECTION_FILENAME]
     row["Host IPS Status (Host IPS)"] = "ON"
     return row
