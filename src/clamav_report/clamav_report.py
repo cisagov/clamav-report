@@ -41,41 +41,13 @@ from schema import And, Schema, SchemaError, Use
 from ._version import __version__
 
 FIELDS = (
-    "GROUPNAME",
-    "COMPUTER_NAME",
-    "IP_ADDR1",
-    "OPERATION_SYSTEM",
-    "SERVICE_PACK",
-    "MAJOR_VERSION",
-    "MINOR_VERSION",
-    "AGENT_VERSION",
-    "CIDS_ENGINE_VERSION",
-    "CIDS_DRV_ONOFF",
-    "LAST_SCAN_TIME",
-    "LAST_VIRUS_TIME",
-    "PATTERNDATE",
-    "COMPUTER_DOMAIN_NAME",
-    "CURRENT_LOGIN_USER",
-    "FIREWALL_ONOFF",
-    "AGENT_TYPE",
-    "IDS_VERSION",
-    "CIDS_DEFSET_VERSION",
-    "HI_REASONCODE",
-    "HI_REASONDESC",
-    "STATUS",
-    "AVGENGINE_ONOFF",
-    "AP_ONOFF",
-    "TAMPER_ONOFF",
-    "LAST_DOWNLOAD_TIME",
-    "PTP_ONOFF",
-    "DA_ONOFF",
-    "INFECTED",
-    "CONTENT_UPDATE",
-    "LAST_UPDATED_TIME",
-    "HI_STATUS",
-    "VERSION",
+    "Group Name",
+    "System Name",
+    "Last Update Time",
+    "Last Scan Time",
+    "Host IPS Status (Host IPS)",
 )
-TIME_FORMAT = "%m/%d/%Y %H:%M:%S"
+TIME_FORMAT = "%m/%d/%Y %H:%M"
 CLAMAV_DB_FILENAME = "/var/lib/clamav/daily.cld"
 LAST_SCAN_LOG_FILENAME = "/var/log/clamav/lastscan.log"
 LAST_DETECTION_FILENAME = "/var/log/clamav/last_detection"
@@ -96,18 +68,20 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, **kwargs):
         """Store results of a good task run."""
         # store results for retrieval later
-        logging.debug(f"Task callback OK: {result._host.name} - {result.task_name}")
+        logging.debug("Task callback OK: %s - %s", result._host.name, result.task_name)
         self.results[result._host.name][result.task_name].append(result._result)
 
     def v2_runner_on_unreachable(self, result):
         """Handle unreachable hosts."""
         logging.warning(
-            f"Task callback UNREACHABLE: {result._host.name} - {result.task_name}"
+            "Task callback UNREACHABLE: %s - %s", result._host.name, result.task_name
         )
 
     def v2_runner_on_failed(self, result, *args, **kwargs):
         """Handle failed tasks."""
-        logging.error(f"Task callback FAILED: {result._host.name} - {result.task_name}")
+        logging.error(
+            "Task callback FAILED: %s - %s", result._host.name, result.task_name
+        )
 
 
 def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
@@ -137,7 +111,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
     # Create inventory, use path to host config file as source or
     # hosts in a comma separated string.
-    logging.debug(f"Reading inventory from: {inventory_filename}")
+    logging.debug("Reading inventory from: %s", inventory_filename)
     inventory = InventoryManager(loader=loader, sources=inventory_filename)
 
     # Variable manager takes care of merging all the different sources to
@@ -183,7 +157,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
             passwords=passwords,
             stdout_callback=results_callback,  # Use our custom callback.
         )
-        logging.debug(f"Starting task queue manager with forks={forks}.")
+        logging.debug("Starting task queue manager with forks=%d.", forks)
         tqm.run(play)
     finally:
         # We always need to cleanup child procs and
@@ -194,7 +168,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
         # Remove ansible temporary directory
         logging.debug(
-            f"Cleaning up temporary file in {ANSIBLE_CONST.DEFAULT_LOCAL_TMP}"
+            "Cleaning up temporary file in %s", ANSIBLE_CONST.DEFAULT_LOCAL_TMP
         )
         shutil.rmtree(ANSIBLE_CONST.DEFAULT_LOCAL_TMP, True)
 
@@ -213,23 +187,24 @@ def create_host_row(host_results):
     """Create a row of data from a host's results."""
     facts = host_results["Gathering Facts"][0]["ansible_facts"]
     # extract the mtimes from the "stat" module invocations
-    mtimes = dict()
+    mtimes = {}
     for stat_task in host_results["stat"]:
         path = stat_task["invocation"]["module_args"]["path"]
         mtime = stat_task["stat"].get("mtime", 0)  # 0 if it doesn't exist
         mtimes[path] = timestamp_to_string(mtime)
     row = {key: None for key in FIELDS}
-    row["IP_ADDR1"] = facts["ansible_default_ipv4"]["address"]
-    row["COMPUTER_NAME"] = facts["ansible_hostname"]
-    row["OPERATION_SYSTEM"] = facts["ansible_system"]
-    row["MAJOR_VERSION"] = 0
-    row["MINOR_VERSION"] = 0
-    row["AGENT_VERSION"] = "0.0.0.0"  # nosec
-    row["CIDS_ENGINE_VERSION"] = "0.0.0.0"  # nosec
-    row["CIDS_DRV_ONOFF"] = "ON"
-    row["LAST_SCAN_TIME"] = mtimes[LAST_SCAN_LOG_FILENAME]
-    row["LAST_VIRUS_TIME"] = mtimes[LAST_DETECTION_FILENAME]
-    row["PATTERNDATE"] = mtimes[CLAMAV_DB_FILENAME]
+    # "Group Name" is intentionally left blank so that it can be manually
+    # edited after the output CSV has been generated.
+    row["Group Name"] = ""
+    row["System Name"] = facts["ansible_hostname"]
+    row["Last Update Time"] = mtimes[CLAMAV_DB_FILENAME]
+    row["Last Scan Time"] = mtimes[LAST_SCAN_LOG_FILENAME]
+    # "Last Detection Time" is not currently needed in the output, but I left
+    # it commented-out below in case of the likely event it is requested again
+    # in the future.  Note that it would also need to be added to the FIELDS
+    # tuple above.
+    # row["Last Detection Time"] = mtimes[LAST_DETECTION_FILENAME]
+    row["Host IPS Status (Host IPS)"] = "ON"
     return row
 
 
@@ -297,7 +272,7 @@ def main() -> None:
         csv_data.append(row)
 
     logging.info(
-        "Generating consolidated virus report: " + validated_args["<output-csv-file>"]
+        "Generating consolidated virus report: %s", validated_args["<output-csv-file>"]
     )
     write_csv(FIELDS, csv_data, validated_args["<output-csv-file>"])
 
