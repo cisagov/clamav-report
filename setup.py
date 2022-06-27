@@ -93,7 +93,7 @@ setup(
         # OS family.  This simplifies a lot of things for roles that support
         # Kali Linux, so it makes sense to force the installation of Ansible
         # 2.10 or newer.
-        "ansible>=2.10,<6",
+        "ansible>=2.10,<7",
         "docopt",
         "python-dateutil",
         "schema",
