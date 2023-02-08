@@ -1,9 +1,8 @@
 # clamav-report 🦪📊 #
 
 [![GitHub Build Status](https://github.com/cisagov/clamav-report/workflows/build/badge.svg)](https://github.com/cisagov/clamav-report/actions)
+[![CodeQL](https://github.com/cisagov/clamav-report/workflows/CodeQL/badge.svg)](https://github.com/cisagov/clamav-report/actions/workflows/codeql-analysis.yml)
 [![Coverage Status](https://coveralls.io/repos/github/cisagov/clamav-report/badge.svg?branch=develop)](https://coveralls.io/github/cisagov/clamav-report?branch=develop)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/cisagov/clamav-report.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/clamav-report/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/cisagov/clamav-report.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/cisagov/clamav-report/context:python)
 [![Known Vulnerabilities](https://snyk.io/test/github/cisagov/clamav-report/develop/badge.svg)](https://snyk.io/test/github/cisagov/clamav-report)
 
 This is a tool that will collect ClamAV data using an
