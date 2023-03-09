@@ -4,6 +4,9 @@
 #
 # Usage: ./clamav_log_report.sh <instance-id>...
 
+set -o nounset
+set -o errexit
+set -o pipefail
 if [ $# -eq 0 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "Usage: $0 <instance-id>..."
   exit 1
