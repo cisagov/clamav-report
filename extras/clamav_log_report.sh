@@ -20,6 +20,8 @@ logfile="./clamav-$today.log"
 exec > >(tee -ai "$logfile")
 exec 2> >(tee -ai "$logfile" >&2)
 
+clamav_scan_log="/var/log/clamav/lastscan.log"
+
 instances=("$@")
 
 for instance_id in "${instances[@]}"; do
@@ -27,5 +29,5 @@ for instance_id in "${instances[@]}"; do
   # the summary of the most-recent scan results.
   aws ssm start-session --target="$instance_id" \
     --document=AWS-StartInteractiveCommand \
-    --parameters="command='hostname; tail --lines=12 /var/log/clamav/lastscan.log'"
+    --parameters command="hostname; tail --lines=12 $clamav_scan_log"
 done
