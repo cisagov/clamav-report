@@ -23,6 +23,8 @@ exec 2> >(tee -ai "$logfile" >&2)
 instances=("$@")
 
 for instance_id in "${instances[@]}"; do
+  # tail --lines=12: Output last 12 lines of ClamAV scan log, which includes
+  # the summary of the most-recent scan results.
   aws ssm start-session --target="$instance_id" \
     --document=AWS-StartInteractiveCommand \
     --parameters="command='hostname; tail --lines=12 /var/log/clamav/lastscan.log'"
