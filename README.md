@@ -22,6 +22,32 @@ $ clamav-report tests/files/inventory.txt clamav-201909.csv
 2019-09-09 15:39:47,268 INFO Generating consolidated virus report: clamav-201909.csv
 ```
 
+For gathering ClamAV log data from AWS instances that are accessible via
+[SSM](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html),
+the `clamav_log_report.sh` shell script has been provided in the `extras`
+directory:
+
+```console
+$ ./extras/clamav_log_report.sh i-0123456789abcdef0
+
+Starting session with SessionId: iam.username-0123456789abcdef0
+
+bar.foo.gov
+----------- SCAN SUMMARY -----------
+Known viruses: 8654853
+Engine version: 0.103.6
+Scanned directories: 5141
+Scanned files: 42629
+Infected files: 0
+Data scanned: 2949.27 MB
+Data read: 3249.70 MB (ratio 0.91:1)
+Time: 574.106 sec (9 m 34 s)
+Start Date: 2023:03:05 06:47:01
+End Date:   2023:03:05 06:56:35
+
+Exiting session with sessionId: david.redmin-0123456789abcdef0.
+```
+
 ## Contributing ##
 
 We welcome contributions!  Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) for
