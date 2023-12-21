@@ -75,15 +75,14 @@ setup(
         # that you indicate whether you support Python 2, Python 3 or both.
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     # What does your project relate to?
     keywords="clamav",
     packages=find_packages(where="src"),
@@ -92,11 +91,16 @@ setup(
     include_package_data=True,
     install_requires=[
         # With the release of version 2.10, Ansible finally correctly
-        # identifies Kali Linux as being the Kali distribution of the Debian
-        # OS family.  This simplifies a lot of things for roles that support
-        # Kali Linux, so it makes sense to force the installation of Ansible
-        # 2.10 or newer.
-        "ansible>=2.10,<6",
+        # identifies Kali Linux as being the Kali distribution of the
+        # Debian OS family.  This simplifies a lot of things for roles
+        # that support Kali Linux, so it makes sense to force the
+        # installation of Ansible 2.10 or newer.
+        #
+        # We need at least version 6 to correctly identify Amazon
+        # Linux 2023 as using the dnf package manager; furthermore,
+        # our pytests do not run under Python>=3.12 without at least
+        # version 6.
+        "ansible>=6,<7",
         "docopt",
         "python-dateutil",
         "schema",
