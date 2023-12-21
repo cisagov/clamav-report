@@ -100,7 +100,7 @@ setup(
         # Linux 2023 as using the dnf package manager; furthermore,
         # our pytests do not run under Python>=3.12 without at least
         # version 6.
-        "ansible>=6,<7",
+        "ansible>=6,<10",
         "docopt",
         "python-dateutil",
         "schema",
