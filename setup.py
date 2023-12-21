@@ -93,11 +93,16 @@ setup(
     include_package_data=True,
     install_requires=[
         # With the release of version 2.10, Ansible finally correctly
-        # identifies Kali Linux as being the Kali distribution of the Debian
-        # OS family.  This simplifies a lot of things for roles that support
-        # Kali Linux, so it makes sense to force the installation of Ansible
-        # 2.10 or newer.
-        "ansible>=2.10,<6",
+        # identifies Kali Linux as being the Kali distribution of the
+        # Debian OS family.  This simplifies a lot of things for roles
+        # that support Kali Linux, so it makes sense to force the
+        # installation of Ansible 2.10 or newer.
+        #
+        # We need at least version 6 to correctly identify Amazon
+        # Linux 2023 as using the dnf package manager; furthermore,
+        # our pytests do not run under Python>=3.12 without at least
+        # version 6.
+        "ansible>=6,<7",
         "docopt",
         "python-dateutil",
         "schema",
