@@ -1,4 +1,5 @@
 """The clamav_report library."""
+
 # Standard Python Libraries
 from typing import List
 
