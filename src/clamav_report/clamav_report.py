@@ -93,7 +93,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
         module_path=[],
         forks=forks,
         become=become,
-        become_method="sudo",
+        become_method="ansible.builtin.sudo",
         become_user=None,
         check=False,
         diff=False,
@@ -127,16 +127,24 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
         tasks=[
             dict(
                 action=dict(
-                    module="stat", get_checksum=False, path=LAST_SCAN_LOG_FILENAME
+                    module="ansible.builtin.stat",
+                    get_checksum=False,
+                    path=LAST_SCAN_LOG_FILENAME,
                 )
             ),
             dict(
                 action=dict(
-                    module="stat", get_checksum=False, path=LAST_DETECTION_FILENAME
+                    module="ansible.builtin.stat",
+                    get_checksum=False,
+                    path=LAST_DETECTION_FILENAME,
                 )
             ),
             dict(
-                action=dict(module="stat", get_checksum=False, path=CLAMAV_DB_FILENAME)
+                action=dict(
+                    module="ansible.builtin.stat",
+                    get_checksum=False,
+                    path=CLAMAV_DB_FILENAME,
+                )
             ),
         ],
     )
