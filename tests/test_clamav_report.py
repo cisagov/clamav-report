@@ -1,4 +1,3 @@
-#!/usr/bin/env pytest -vs
 """Tests for clamav_report."""
 
 # Standard Python Libraries
