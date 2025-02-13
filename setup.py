@@ -90,17 +90,15 @@ setup(
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
     install_requires=[
-        # With the release of version 2.10, Ansible finally correctly
-        # identifies Kali Linux as being the Kali distribution of the
-        # Debian OS family.  This simplifies a lot of things for roles
-        # that support Kali Linux, so it makes sense to force the
-        # installation of Ansible 2.10 or newer.
+        # Version 10 is required because the pip-audit pre-commit
+        # hook identifies a vulnerability in ansible-core 2.16.13,
+        # but all versions of ansible 9 have a dependency on
+        # ~=2.16.X.
         #
-        # We need at least version 6 to correctly identify Amazon
-        # Linux 2023 as using the dnf package manager; furthermore,
-        # our pytests do not run under Python>=3.12 without at least
-        # version 6.
-        "ansible>=6,<7",
+        # It is also a good idea to go ahead and upgrade to version 10
+        # since version 9 is now EOL as of the end of November 2024:
+        # https://endoflife.date/ansible
+        "ansible>=10,<11",
         "docopt",
         "python-dateutil",
         "schema",
