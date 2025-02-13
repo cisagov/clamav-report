@@ -115,6 +115,7 @@ setup(
         # checking between environments.
         "dev": [
             "types-docopt",
+            "types-python-dateutil",
             "types-setuptools",
         ],
         "test": [
