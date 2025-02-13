@@ -161,8 +161,8 @@ repos:
         # the dev section of setup.py to avoid discrepancies in type
         # checking between environments.
         additional_dependencies:
-          - types-python-dateutil
           - types-docopt
+          - types-python-dateutil
           - types-setuptools
   - repo: https://github.com/pypa/pip-audit
     rev: v2.7.3
