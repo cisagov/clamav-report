@@ -97,7 +97,7 @@ setup(
         # It is also a good idea to go ahead and upgrade to version 10
         # since version 9 is now EOL as of the end of November 2024:
         # https://endoflife.date/ansible
-        "ansible>=10,<11",
+        "ansible>=10,<12",
         "docopt",
         "python-dateutil",
         "schema",
