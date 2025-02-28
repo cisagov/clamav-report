@@ -75,14 +75,13 @@ setup(
         # that you indicate whether you support Python 2, Python 3 or both.
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.10",
     # What does your project relate to?
     keywords="clamav",
     packages=find_packages(where="src"),
@@ -90,36 +89,39 @@ setup(
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
     include_package_data=True,
     install_requires=[
-        # With the release of version 2.10, Ansible finally correctly
-        # identifies Kali Linux as being the Kali distribution of the
-        # Debian OS family.  This simplifies a lot of things for roles
-        # that support Kali Linux, so it makes sense to force the
-        # installation of Ansible 2.10 or newer.
+        # Version 10 is required because the pip-audit pre-commit
+        # hook identifies a vulnerability in ansible-core 2.16.13,
+        # but all versions of ansible 9 have a dependency on
+        # ~=2.16.X.
         #
-        # We need at least version 6 to correctly identify Amazon
-        # Linux 2023 as using the dnf package manager; furthermore,
-        # our pytests do not run under Python>=3.12 without at least
-        # version 6.
-        "ansible>=6,<7",
+        # It is also a good idea to go ahead and upgrade to version 10
+        # since version 9 is now EOL as of the end of November 2024:
+        # https://endoflife.date/ansible
+        "ansible>=10,<11",
         "docopt",
         "python-dateutil",
         "schema",
-        "setuptools >= 24.2.0",
+        "setuptools",
     ],
     extras_require={
+        # IMPORTANT: Keep type hinting-related dependencies of the dev section
+        # in sync with the mypy pre-commit hook configuration (see
+        # .pre-commit-config.yaml). Any changes to type hinting-related
+        # dependencies here should be reflected in the additional_dependencies
+        # field of the mypy pre-commit hook to avoid discrepancies in type
+        # checking between environments.
+        "dev": [
+            "types-docopt",
+            "types-python-dateutil",
+            "types-setuptools",
+        ],
         "test": [
             "coverage",
-            # coveralls 1.11.0 added a service number for calls from
-            # GitHub Actions. This caused a regression which resulted in a 422
-            # response from the coveralls API with the message:
-            # Unprocessable Entity for url: https://coveralls.io/api/v1/jobs
-            # 1.11.1 fixed this issue, but to ensure expected behavior we'll pin
-            # to never grab the regression version.
-            "coveralls != 1.11.0",
+            "coveralls",
             "pre-commit",
             "pytest-cov",
             "pytest",
-        ]
+        ],
     },
     # Conveniently allows one to run the CLI tool as `clamav-report`
     entry_points={
