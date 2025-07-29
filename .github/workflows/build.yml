@@ -217,7 +217,9 @@ jobs:
           - macos-latest
           - ubuntu-24.04-arm
           - ubuntu-latest
-          - windows-latest
+          # cisagov/clamav-report cannot currently support Windows as
+          # it relies on the grp Python module.
+          # - windows-latest
         python-version:
           - "3.10"
           - "3.11"
@@ -427,7 +429,9 @@ jobs:
           - macos-latest
           - ubuntu-24.04-arm
           - ubuntu-latest
-          - windows-latest
+          # cisagov/clamav-report cannot currently support Windows as
+          # it relies on the grp Python module.
+          # - windows-latest
         python-version:
           - "3.10"
           - "3.11"
