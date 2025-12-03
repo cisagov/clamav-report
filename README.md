@@ -1,8 +1,10 @@
 # clamav-report 🦪📊 #
 
 [![GitHub Build Status](https://github.com/cisagov/clamav-report/workflows/build/badge.svg)](https://github.com/cisagov/clamav-report/actions)
+[![License](https://img.shields.io/github/license/cisagov/clamav-report)](https://spdx.org/licenses/)
 [![CodeQL](https://github.com/cisagov/clamav-report/workflows/CodeQL/badge.svg)](https://github.com/cisagov/clamav-report/actions/workflows/codeql-analysis.yml)
 [![Coverage Status](https://coveralls.io/repos/github/cisagov/clamav-report/badge.svg?branch=develop)](https://coveralls.io/github/cisagov/clamav-report?branch=develop)
+[![Code Style](https://img.shields.io/badge/Code%20Style-black-black)](https://github.com/psf/black)
 
 This is a tool that will collect ClamAV data using an
 [Ansible](https://www.ansible.com) inventory and create a CSV file
