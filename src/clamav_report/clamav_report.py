@@ -22,7 +22,7 @@ import logging
 import os.path
 import shutil
 import sys
-from typing import Any, Dict
+from typing import Any
 
 # Third-Party Libraries
 from ansible import context
@@ -228,7 +228,7 @@ def write_csv(fields, data, output_filename, delimiter=","):
 
 def main() -> None:
     """Gather ClamAV data from hosts and create a CSV file."""
-    args: Dict[str, str] = docopt.docopt(__doc__, version=__version__)
+    args: dict[str, str] = docopt.docopt(__doc__, version=__version__)
     # Validate and convert arguments as needed
     schema: Schema = Schema(
         {
@@ -254,7 +254,7 @@ def main() -> None:
     )
 
     try:
-        validated_args: Dict[str, Any] = schema.validate(args)
+        validated_args: dict[str, Any] = schema.validate(args)
     except SchemaError as err:
         # Exit because one or more of the arguments were invalid
         print(err, file=sys.stderr)
