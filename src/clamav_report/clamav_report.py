@@ -218,12 +218,13 @@ def create_host_row(host_results):
 
 def write_csv(fields, data, output_filename, delimiter=","):
     """Write a CVS file out."""
-    csv_writer = csv.DictWriter(
-        open(output_filename, "w"), fields, extrasaction="ignore", delimiter=delimiter
-    )
-    csv_writer.writeheader()
-    for row in data:
-        csv_writer.writerow(row)
+    with open(output_filename, "w") as file:
+        csv_writer = csv.DictWriter(
+            file, fields, extrasaction="ignore", delimiter=delimiter
+        )
+        csv_writer.writeheader()
+        for row in data:
+            csv_writer.writerow(row)
 
 
 def main() -> None:
