@@ -284,6 +284,3 @@ def main() -> None:
         "Generating consolidated virus report: %s", validated_args["<output-csv-file>"]
     )
     write_csv(FIELDS, csv_data, validated_args["<output-csv-file>"])
-
-    # Stop logging and clean up
-    logging.shutdown()
