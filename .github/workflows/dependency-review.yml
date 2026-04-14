@@ -93,3 +93,22 @@ jobs:
       - id: dependency-review
         name: Review dependency changes for vulnerabilities and license changes
         uses: actions/dependency-review-action@v4
+        with:
+          # We have to ignore this vulnerability since the code in
+          # this repo is currently incompatible with ansible>=12.2.0
+          # where the vulnerability is fixed.  Making the code
+          # compatible would require a rewrite using ansible-runner as
+          # that is the preferred method instead of monkeying with
+          # ansible internals:
+          # -
+          # https://docs.ansible.com/projects/ansible/latest/dev_guide/developing_api.html
+          # -
+          # https://docs.ansible.com/projects/runner/en/latest/python_interface/#
+          #
+          # This isn't a big deal since the vulnerability only impacts
+          # users of the Keycloak modules in
+          # ansible.community.general, and we don't use these modules.
+          #
+          # TODO: Remove this when it becomes possible.  See #48 for
+          # more details.
+          allow-ghsas: GHSA-8ggh-xwr9-3373
