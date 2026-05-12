@@ -26,7 +26,7 @@ from typing import Any
 
 # Third-Party Libraries
 from ansible import context
-import ansible.constants as ANSIBLE_CONST
+import ansible.constants as ansible_const
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.inventory.manager import InventoryManager
 from ansible.module_utils.common.collections import ImmutableDict
@@ -176,9 +176,9 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
         # Remove ansible temporary directory
         logging.debug(
-            "Cleaning up temporary file in %s", ANSIBLE_CONST.DEFAULT_LOCAL_TMP
+            "Cleaning up temporary file in %s", ansible_const.DEFAULT_LOCAL_TMP
         )
-        shutil.rmtree(ANSIBLE_CONST.DEFAULT_LOCAL_TMP, True)
+        shutil.rmtree(ansible_const.DEFAULT_LOCAL_TMP, True)
 
     return results_callback.results
 
