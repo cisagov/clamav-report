@@ -200,7 +200,7 @@ def create_host_row(host_results):
         path = stat_task["invocation"]["module_args"]["path"]
         mtime = stat_task["stat"].get("mtime", 0)  # 0 if it doesn't exist
         mtimes[path] = timestamp_to_string(mtime)
-    row = {key: None for key in FIELDS}
+    row = dict.fromkeys(FIELDS, None)
     # "Group Name" is intentionally left blank so that it can be manually
     # edited after the output CSV has been generated.
     row["Group Name"] = ""
