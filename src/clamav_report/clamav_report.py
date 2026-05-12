@@ -103,7 +103,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
     # Initialize required objects.
     # Takes care of finding and reading yaml, json and ini files.
     loader = DataLoader()
-    passwords = dict(vault_pass="secret")  # nosec
+    passwords = {"vault_pass": "secret"}  # nosec
 
     # Instantiate our ResultCallback for handling results as they come in.
     # Ansible expects this to be one of its main display outlets.
@@ -120,34 +120,34 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
     # Create data structure that represents our play, including tasks,
     # this is basically what our YAML loader does internally.
-    play_source = dict(
-        name="Ansible Play",
-        hosts=hosts,
-        gather_facts="yes",
-        tasks=[
-            dict(
-                action=dict(
-                    module="ansible.builtin.stat",
-                    get_checksum=False,
-                    path=LAST_SCAN_LOG_FILENAME,
-                )
-            ),
-            dict(
-                action=dict(
-                    module="ansible.builtin.stat",
-                    get_checksum=False,
-                    path=LAST_DETECTION_FILENAME,
-                )
-            ),
-            dict(
-                action=dict(
-                    module="ansible.builtin.stat",
-                    get_checksum=False,
-                    path=CLAMAV_DB_FILENAME,
-                )
-            ),
+    play_source = {
+        "name": "Ansible Play",
+        "hosts": hosts,
+        "gather_facts": "yes",
+        "tasks": [
+            {
+                "action": {
+                    "module": "ansible.builtin.stat",
+                    "get_checksum": False,
+                    "path": LAST_SCAN_LOG_FILENAME,
+                }
+            },
+            {
+                "action": {
+                    "module": "ansible.builtin.stat",
+                    "get_checksum": False,
+                    "path": LAST_DETECTION_FILENAME,
+                }
+            },
+            {
+                "action": {
+                    "module": "ansible.builtin.stat",
+                    "get_checksum": False,
+                    "path": CLAMAV_DB_FILENAME,
+                }
+            },
         ],
-    )
+    }
 
     # Create play object, playbook objects use .load instead of init or new methods,
     # this will also automatically create the task objects from the
