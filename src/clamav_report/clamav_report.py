@@ -276,7 +276,7 @@ def main() -> None:
     )
 
     csv_data = []
-    for host, host_results in results.items():
+    for _host, host_results in results.items():
         row = create_host_row(host_results)
         csv_data.append(row)
 
