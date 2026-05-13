@@ -26,7 +26,7 @@ from typing import Any
 
 # Third-Party Libraries
 from ansible import context
-import ansible.constants as ANSIBLE_CONST
+import ansible.constants as ansible_const
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.inventory.manager import InventoryManager
 from ansible.module_utils.common.collections import ImmutableDict
@@ -103,7 +103,7 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
     # Initialize required objects.
     # Takes care of finding and reading yaml, json and ini files.
     loader = DataLoader()
-    passwords = dict(vault_pass="secret")  # nosec
+    passwords = {"vault_pass": "secret"}  # nosec
 
     # Instantiate our ResultCallback for handling results as they come in.
     # Ansible expects this to be one of its main display outlets.
@@ -120,34 +120,34 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
     # Create data structure that represents our play, including tasks,
     # this is basically what our YAML loader does internally.
-    play_source = dict(
-        name="Ansible Play",
-        hosts=hosts,
-        gather_facts="yes",
-        tasks=[
-            dict(
-                action=dict(
-                    module="ansible.builtin.stat",
-                    get_checksum=False,
-                    path=LAST_SCAN_LOG_FILENAME,
-                )
-            ),
-            dict(
-                action=dict(
-                    module="ansible.builtin.stat",
-                    get_checksum=False,
-                    path=LAST_DETECTION_FILENAME,
-                )
-            ),
-            dict(
-                action=dict(
-                    module="ansible.builtin.stat",
-                    get_checksum=False,
-                    path=CLAMAV_DB_FILENAME,
-                )
-            ),
+    play_source = {
+        "name": "Ansible Play",
+        "hosts": hosts,
+        "gather_facts": "yes",
+        "tasks": [
+            {
+                "action": {
+                    "module": "ansible.builtin.stat",
+                    "get_checksum": False,
+                    "path": LAST_SCAN_LOG_FILENAME,
+                }
+            },
+            {
+                "action": {
+                    "module": "ansible.builtin.stat",
+                    "get_checksum": False,
+                    "path": LAST_DETECTION_FILENAME,
+                }
+            },
+            {
+                "action": {
+                    "module": "ansible.builtin.stat",
+                    "get_checksum": False,
+                    "path": CLAMAV_DB_FILENAME,
+                }
+            },
         ],
-    )
+    }
 
     # Create play object, playbook objects use .load instead of init or new methods,
     # this will also automatically create the task objects from the
@@ -176,9 +176,9 @@ def run_ansible(inventory_filename, become=None, hosts="all", forks=10):
 
         # Remove ansible temporary directory
         logging.debug(
-            "Cleaning up temporary file in %s", ANSIBLE_CONST.DEFAULT_LOCAL_TMP
+            "Cleaning up temporary file in %s", ansible_const.DEFAULT_LOCAL_TMP
         )
-        shutil.rmtree(ANSIBLE_CONST.DEFAULT_LOCAL_TMP, True)
+        shutil.rmtree(ansible_const.DEFAULT_LOCAL_TMP, True)
 
     return results_callback.results
 
@@ -200,7 +200,7 @@ def create_host_row(host_results):
         path = stat_task["invocation"]["module_args"]["path"]
         mtime = stat_task["stat"].get("mtime", 0)  # 0 if it doesn't exist
         mtimes[path] = timestamp_to_string(mtime)
-    row = {key: None for key in FIELDS}
+    row = dict.fromkeys(FIELDS, None)
     # "Group Name" is intentionally left blank so that it can be manually
     # edited after the output CSV has been generated.
     row["Group Name"] = ""
@@ -276,7 +276,7 @@ def main() -> None:
     )
 
     csv_data = []
-    for host, host_results in results.items():
+    for _host, host_results in results.items():
         row = create_host_row(host_results)
         csv_data.append(row)
 
